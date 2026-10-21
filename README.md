@@ -1,14 +1,14 @@
 # LH_NameplateThreatColors
 
-Version: 1.1.0. WoW Forever Beta (Interface 16001).
+Version: 1.1.1. WoW Forever Beta (Interface 16001).
 
-Colors Blizzard nameplate health bars for attackable NPCs while you are in a party or raid, or have a living pet. When solo without a living pet, Blizzard's original colors are retained regardless of role mode.
+Colors Blizzard nameplate health bars for attackable NPCs while you are in combat and in a party or raid, or have a living pet. Outside combat, Blizzard's original colors are retained, including hostile red and friendly green pet nameplates. When solo without a living pet, Blizzard's original colors are retained regardless of role mode.
 
-NPCs whose kills do not count for you because another player has tagged them appear gray while grouped or accompanied by a living pet. Gray takes priority over threat colors. When solo without a living pet, Blizzard's original colors also apply to these NPCs.
+NPCs whose kills do not count for you because another player has tagged them appear gray while in combat and grouped or accompanied by a living pet. Gray takes priority over threat colors. Outside combat or when solo without a living pet, Blizzard's original colors also apply to these NPCs.
 
 ## Threat colors
 
-Hunters with a living pet use these colors regardless of role mode, including while solo: red when the player has aggro, orange for high player threat without aggro, and green otherwise, including when the pet has aggro. Without a pet, or with a dead pet, normal role rules apply.
+Hunters with a living pet use these colors in combat regardless of role mode, including while solo: red when the player has aggro, orange for high player threat without aggro, and green otherwise, including when the pet has aggro. Without a pet, or with a dead pet, normal role rules apply.
 
 | Situation | Tank | DPS/Healer |
 | --- | --- | --- |
@@ -48,13 +48,18 @@ To retain your role setting, close WoW and back up each character's `WTF/Account
 
 ## In-game checks
 
-Check solo play, joining and leaving groups, role changes, secure and threatened aggro, losing aggro to a group member, living/dead pets and recycled nameplates. Open the native options page, disable with colored plates visible and confirm that Blizzard colors immediately return. Reenable, change each role mode, use Defaults and check saved settings after `/reload`. Native rendering and real engine secret-value behavior remain pending in game.
+Check solo play, joining and leaving groups, role changes, secure and threatened aggro, losing aggro to a group member, living/dead pets and recycled nameplates. In a group and with a living pet, confirm that hostile and friendly pet nameplates keep Blizzard's colors outside combat, then switch to threat colors on combat entry and back on combat exit. Open the native options page, disable with colored plates visible and confirm that Blizzard colors immediately return. Reenable, change each role mode, use Defaults and check saved settings after `/reload`. Native rendering and real engine secret-value behavior remain pending in game.
 
 ## Automated verification
 
-`.settings-test.py` passed Lua 5.1 simulations for native module registration, the role dropdown, defaults, saved role/activation values, chat/UI synchronization, immediate restoration of the latest original color and alpha, hook reuse, newly discovered plates, group/pet/solo rules, tank/DPS colors, tap priority and restricted-threat fallback. Shared icon files are verified byte-for-byte against LH_Tweaks; `git diff --check` passed. Run `python LH_NameplateThreatColors/.settings-test.py` from the AddOns folder with Lupa available in `LH_Tweaks/.test-runtime`.
+`.settings-test.py` passed Lua 5.1 simulations for native module registration, the role dropdown, defaults, saved role/activation values, chat/UI synchronization, immediate restoration of the latest original color and alpha, out-of-combat hostile/friendly pet colors, hook reuse, newly discovered plates, group/pet/solo rules, tank/DPS colors, tap priority and restricted-threat fallback. Shared icon files are verified byte-for-byte against LH_Tweaks; `git diff --check` passed. Run `python LH_NameplateThreatColors/.settings-test.py` from the AddOns folder with Lupa available in `LH_Tweaks/.test-runtime`.
 
 ## Changelog
+
+### 1.1.1 - 2026-10-21
+
+- Apply threat colors only while the player is in combat; restore Blizzard's latest colors on combat exit, including hostile and friendly pet nameplates.
+- Extended the Lua 5.1 simulation for group and pet scenarios outside combat and for combat transitions.
 
 ### 1.1.0 - 2026-10-21
 

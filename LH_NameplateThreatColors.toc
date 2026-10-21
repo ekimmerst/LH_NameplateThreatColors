@@ -6,7 +6,7 @@
 ## IconTexture: Interface\AddOns\LH_NameplateThreatColors\Media\Icon
 ## Notes: Role-based threat colors for Blizzard nameplate health bars in groups.
 ## Author: LH_NameplateThreatColors
-## Version: 1.1.0
+## Version: 1.1.1
 ## SavedVariablesPerCharacter: LH_NameplateThreatColorsDB
 
 LH_NameplateThreatColors.lua

@@ -16,7 +16,7 @@ local function Build(category, layout)
         function() return Addon:IsEnabled() end,
         function(value) Addon:SetEnabled(value) end)
     local parent = Settings.CreateCheckbox(category, enabled,
-        "Color attackable NPC health bars while grouped or accompanied by a living pet. Disabling immediately restores Blizzard's latest colors. Saved per character.")
+        "Color attackable NPC health bars in combat while grouped or accompanied by a living pet. Outside combat, Blizzard's latest colors are retained. Saved per character.")
     local role = Settings.RegisterProxySetting(category, variables[2], "string", "Role mode", "auto",
         function() return Addon:GetRole() end,
         function(value) Addon:SetRole(value) end)

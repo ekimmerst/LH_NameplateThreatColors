@@ -35,6 +35,7 @@ local function DesiredColor(unit)
     if not Addon:IsEnabled() then return nil end
     local hasPet = HasLivingPet()
     if not hasPet and Read(IsInGroup) ~= true then return nil end
+    if Read(UnitAffectingCombat, "player") ~= true then return nil end
     local _, class = UnitClass("player")
     local hunterPet = hasPet and class == "HUNTER"
     if not Read(UnitExists, unit)

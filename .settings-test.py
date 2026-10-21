@@ -9,7 +9,7 @@ from lupa.lua51 import LuaRuntime
 lua = LuaRuntime()
 lua.execute('''
 frames={};SlashCmdList={};queries=0;hookCount=0;secret={}
-grouped=true;livingPet=false;petDead=false;class='WARRIOR';assigned='NONE';specRole='DAMAGER'
+grouped=true;livingPet=false;petDead=false;inCombat=true;class='WARRIOR';assigned='NONE';specRole='DAMAGER'
 status=3;tapped=false;dead=false;attackable=true;isPlayer=false;targetGroup=false;targetPet=false
 function print() end
 function issecretvalue(v) return v==secret end
@@ -43,6 +43,7 @@ function UnitCanAttack() return attackable end
 function UnitIsTapDenied() return tapped end
 function UnitClass() return 'Class',class end
 function UnitThreatSituation() queries=queries+1;return status end
+function UnitAffectingCombat(unit) assert(unit=='player');return inCombat end
 function IsInGroup() return grouped end
 function IsInRaid() return false end
 function UnitGroupRolesAssigned() return assigned end
@@ -99,6 +100,15 @@ assert(LH_Tweaks.modules.LH_NameplateThreatColors and not registered)
 fire('ADDON_LOADED','LH_NameplateThreatColors')
 assert(LH_NameplateThreatColorsDB.role=='tank' and LH_NameplateThreatColorsDB.enabled)
 assertColor(0,.85,.15);assert(hookCount==1)
+-- Leaving combat restores Blizzard's hostile/friendly colors even in a group or with a pet.
+health:SetStatusBarColor(1,0,0,1);assertColor(0,.85,.15)
+inCombat=false;fire('PLAYER_REGEN_ENABLED');assertColor(1,0,0,1)
+local readsOutsideCombat=queries;update();assert(queries==readsOutsideCombat)
+grouped=false;livingPet=true;class='HUNTER';update();assertColor(1,0,0,1)
+attackable=false;health:SetStatusBarColor(0,1,0,1);update();assertColor(0,1,0,1)
+attackable=true;grouped=true;livingPet=false;class='WARRIOR'
+inCombat=true;health:SetStatusBarColor(.2,.3,.4,.7)
+fire('PLAYER_REGEN_DISABLED');assertColor(0,.85,.15)
 LH_Tweaks.category={};LH_Tweaks:RegisterModulePage('LH_NameplateThreatColors')
 local c=registered
 assert(c.parent==LH_Tweaks.category and c.title=='LH NameplateThreatColors')
@@ -158,4 +168,4 @@ for ext in ('png', 'tga'):
     assert (addon / f'Media/Icon.{ext}').read_bytes() == (core / f'Icon.{ext}').read_bytes()
 toc = (addon / 'LH_NameplateThreatColors.toc').read_text()
 assert '## Group: LH_Tweaks' in toc and 'Settings.lua' in toc
-print('PASS: host integration, role dropdown/defaults, saved modes, immediate restoration including alpha, hook reuse, group/pet/tank/DPS colors, secret fallback, plate lifecycle and shared icons')
+print('PASS: host integration, role dropdown/defaults, saved modes, out-of-combat hostile/friendly restoration, hook reuse, group/pet/tank/DPS colors, secret fallback, plate lifecycle and shared icons')
