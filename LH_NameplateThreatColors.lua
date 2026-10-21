@@ -1,7 +1,18 @@
 local addonName = ...
+local Addon = {}
+LH_NameplateThreatColors = Addon
 local events = CreateFrame("Frame")
 local active, bars = {}, {}
 local elapsed = 0
+local function GetOptions()
+    LH_NameplateThreatColorsDB = type(LH_NameplateThreatColorsDB) == "table" and LH_NameplateThreatColorsDB or {}
+    local options = LH_NameplateThreatColorsDB
+    if type(options.enabled) ~= "boolean" then options.enabled = true end
+    if options.role ~= "tank" and options.role ~= "dps" then options.role = "auto" end
+    return options
+end
+function Addon:IsEnabled() return GetOptions().enabled end
+function Addon:GetRole() return GetOptions().role end
 local colors = { green = {0, 0.85, 0.15}, gray = {0.5, 0.5, 0.5}, orange = {1, 0.5, 0}, red = {1, 0.1, 0.1} }
 local function Read(fn, ...)
     if not fn then return nil end
@@ -21,6 +32,7 @@ local function HasLivingPet()
         and Read(UnitIsDeadOrGhost, "pet") == false
 end
 local function DesiredColor(unit)
+    if not Addon:IsEnabled() then return nil end
     local hasPet = HasLivingPet()
     if not hasPet and Read(IsInGroup) ~= true then return nil end
     local _, class = UnitClass("player")
@@ -80,6 +92,7 @@ local function Release(unit)
     active[unit] = nil
 end
 local function Track(unit)
+    if not Addon:IsEnabled() then return end
     local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit(unit)
     local frame = plate and plate.UnitFrame
     local bar = frame and (frame.healthBar or
@@ -107,8 +120,22 @@ local function UpdateAll()
 end
 local function Discover()
     for unit in pairs(active) do Release(unit) end
+    if not Addon:IsEnabled() then return end
     if not (C_NamePlate and C_NamePlate.GetNamePlateForUnit) then return end
     for i = 1, 40 do Track("nameplate" .. i) end
+end
+
+function Addon:SetEnabled(enabled)
+    GetOptions().enabled = enabled == true
+    elapsed = 0
+    Discover()
+    if self.RefreshSettings then self:RefreshSettings() end
+end
+function Addon:SetRole(role)
+    if role ~= "auto" and role ~= "tank" and role ~= "dps" then return end
+    GetOptions().role = role
+    if self:IsEnabled() then UpdateAll() end
+    if self.RefreshSettings then self:RefreshSettings() end
 end
 for _, event in ipairs({"ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_ENTERING_WORLD",
     "NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED", "GROUP_ROSTER_UPDATE",
@@ -120,9 +147,9 @@ end
 events:SetScript("OnEvent", function(_, event, unit)
     if event == "ADDON_LOADED" then
         if unit ~= addonName then return end
-        if type(LH_NameplateThreatColorsDB) ~= "table" then LH_NameplateThreatColorsDB = {} end
-        local role = LH_NameplateThreatColorsDB.role
-        if role ~= "tank" and role ~= "dps" then LH_NameplateThreatColorsDB.role = "auto" end
+        GetOptions()
+        Discover()
+    elseif not Addon:IsEnabled() then return
     elseif event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD" then
         Discover()
     elseif event == "NAME_PLATE_UNIT_ADDED" then Track(unit)
@@ -130,6 +157,7 @@ events:SetScript("OnEvent", function(_, event, unit)
     else UpdateAll() end
 end)
 events:SetScript("OnUpdate", function(_, delta)
+    if not Addon:IsEnabled() then elapsed = 0; return end
     elapsed = elapsed + delta
     if elapsed < 0.2 then return end
     elapsed = 0
@@ -137,13 +165,18 @@ events:SetScript("OnUpdate", function(_, delta)
 end)
 SLASH_LH_NAMEPLATETHREATCOLORS1 = "/lh_nameplatethreatcolors"
 SlashCmdList.LH_NAMEPLATETHREATCOLORS = function(message)
-    local mode = message:lower():match("^%s*(%S+)")
+    local mode = (message or ""):lower():match("^%s*(.-)%s*$")
     if mode == "tank" or mode == "dps" or mode == "auto" then
-        LH_NameplateThreatColorsDB = LH_NameplateThreatColorsDB or {}
-        LH_NameplateThreatColorsDB.role = mode
-        UpdateAll()
+        Addon:SetRole(mode)
+    elseif mode == "on" or mode == "off" then
+        Addon:SetEnabled(mode == "on")
+        print(Addon:IsEnabled() and "LH_NameplateThreatColors: Enabled." or "LH_NameplateThreatColors: Disabled.")
+        return
+    elseif mode == "" and Addon.category then
+        Settings.OpenToCategory(Addon.category:GetID())
+        return
     end
-    print("LH_NameplateThreatColors: /lh_nameplatethreatcolors auto | tank | dps. Mode: "
+    print("LH_NameplateThreatColors: /lh_nameplatethreatcolors on | off | auto | tank | dps. Mode: "
         .. (LH_NameplateThreatColorsDB and LH_NameplateThreatColorsDB.role or "auto")
         .. "; detected: " .. (IsTank() and "Tank" or "DPS/Healer"))
 end
