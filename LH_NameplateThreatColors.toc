@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: LH_NameplateThreatColors
+## Notes: Role-based threat colors for Blizzard nameplate health bars in groups.
+## Author: LH_NameplateThreatColors
+## Version: 1.0.1
+## SavedVariablesPerCharacter: LH_NameplateThreatColorsDB
+
+LH_NameplateThreatColors.lua
