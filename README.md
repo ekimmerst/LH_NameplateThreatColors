@@ -50,3 +50,7 @@ Check solo play, joining and leaving groups, role changes, secure and threatened
 - Changed the chat command to `/lh_nameplatethreatcolors`.
 - Translated documentation and chat messages into English.
 - Added instructions for transferring the per-character role setting.
+
+## Required core addon
+
+Install and enable **LH_Tweaks** alongside this addon. LH_Tweaks is the shared LiteHawk configuration host and must load first. CurseForge releases must list LH_Tweaks as a required dependency so the client installs it automatically.
