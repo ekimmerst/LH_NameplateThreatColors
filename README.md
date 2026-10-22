@@ -1,5 +1,7 @@
 <h1 style="color: #d9a94b;">LH NameplateThreatColors</h1>
 
+<p>Color Blizzard nameplate health bars by threat, with tank, damage, and healer modes for a quick view of enemy aggro.</p>
+
 <p>A quick read on who an enemy is paying attention to, using Blizzard's own nameplate health bars. LH NameplateThreatColors adds role-aware threat colors without replacing the nameplates.</p>
 
 <h2 style="color: #73c9c4;">What the colors mean</h2>
