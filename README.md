@@ -45,5 +45,13 @@
 
 <p><strong>LH Tweaks is required</strong> and must be installed alongside LH NameplateThreatColors. I made this for my own groups and am glad if it helps yours. Please report confusing colors or other feedback in the CurseForge comments.</p>
 
+<h2 style="color: #73c9c4;">Changelog</h2>
+
+<p><strong>1.1.1 - Forever</strong></p>
+
+<ul>
+  <li>No gameplay changes in this Forever branch; role-aware threat colors remain available.</li>
+</ul>
+
 <hr>
-<p><sup>*</sup> Implemented with the help of Codex and GPT-6-SOL and tested by me as thoroughly as I could in the WoW beta client. Role and class combinations may still need work; please report anything you notice.</p>
+<p><sup>*</sup> Implemented with the help of Codex and GPT-6-SOL. Role and class combinations may still need work; please report anything you notice.</p>
